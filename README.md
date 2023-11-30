@@ -5,6 +5,8 @@
 2. 使用Spark Structured Streaming读取并计算窗口时间内数据的标准差，存到redis中
 3. 从redis中取数，使用mattplotlib绘制图像，横坐标为时间，纵坐标为标准差，如果标准差>m，则认为数据波动过大，存在异常
 
+Overview:![overview](overview.png)
+
 在本目录下载：
 ```bash
 # jdk-8u202-linux-x64.tar.gz from: https://www.oracle.com/java/technologies/javase/javase8-archive-downloads.html
@@ -34,6 +36,7 @@ bash run.sh
 
 ### docker
 
+一键运行
 ```bash
 # build
 docker build -t spark_stream .
