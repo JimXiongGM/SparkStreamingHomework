@@ -28,7 +28,7 @@ def plotdata():
 
     plt.scatter(dates, values, c=colors)
     plt.title("CPU Latency")
-    plt.savefig("cpu_latency.png")
+    plt.savefig("output/cpu_latency.png")
 
 
 if __name__ == "__main__":

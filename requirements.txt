@@ -1,0 +1,6 @@
+tqdm
+pandas
+hdfs
+pyspark
+redis
+matplotlib

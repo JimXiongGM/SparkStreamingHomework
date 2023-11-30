@@ -13,23 +13,23 @@ echo 'export JAVA_HOME=/app/jdk1.8.0_202' >> etc/hadoop/hadoop-env.sh
 
 # Pseudo-Distributed Operation
 # etc/hadoop/core-site.xml:
-echo '<configuration>
-    <property>
-        <name>hadoop.http.staticuser.user</name>
+echo "<configuration>
+   <property>
+        <name>fs.defaultFS</name>
         <value>hdfs://localhost:9000</value>
-    </property>
-</configuration>' >> etc/hadoop/core-site.xml
+   </property>
+</configuration>" > etc/hadoop/core-site.xml
 # etc/hadoop/hdfs-site.xml:
 echo '<configuration>
     <property>
         <name>dfs.replication</name>
         <value>1</value>
     </property>
-</configuration>' >> etc/hadoop/hdfs-site.xml
+</configuration>' > etc/hadoop/hdfs-site.xml
 
 # ssh
+ssh-keygen -t rsa -f ~/.ssh/id_rsa -N ''
 cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
-export PDSH_RCMD_TYPE=ssh
 pdsh -q -w localhost
 
 # Execution

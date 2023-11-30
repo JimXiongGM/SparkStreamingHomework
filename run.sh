@@ -2,6 +2,7 @@
 
 # start hadoop and redis
 echo "start hadoop and redis"
+service ssh start
 cd /app/hadoop-3.3.6
 sbin/start-dfs.sh
 
@@ -13,11 +14,13 @@ screen -S redis -X stuff "src/redis-server --port 6379
 
 # run the calculation
 echo "start running the calculation"
+cd /app
 
 # 1. upload data to HDFS
 python3 step1_hdfs.py
 
 # 2. start data server
+cd /app
 screen -S dataserver -d -m
 screen -S dataserver -X stuff "python3 step2_datagen.py
 "
@@ -25,7 +28,7 @@ screen -S dataserver -X stuff "python3 step2_datagen.py
 # 3. start Spark Structured Streaming：
 cd /app/spark-3.5.0-bin-hadoop3
 screen -S spark -d -m
-screen -S spark -X stuff "bin/spark-submit ../step3_spark.py
+screen -S spark -X stuff "export JAVA_HOME=/app/jdk-17.0.9 && bin/spark-submit ../step3_spark.py
 "
 
 # 4. wait for 30min, start data visualization

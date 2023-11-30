@@ -1,3 +1,4 @@
+import os
 import socket
 import time
 
@@ -6,38 +7,17 @@ from tqdm import tqdm
 
 
 def generate_log_data():
-    """
-    data format:
-        operator,term,index,raftTime,prevApplyTime,valueSize
-        InsertRowNode,1,1,1685462268278,1685462268525,100
-        InsertRowNode,1,3,1685462268829,1685462268840,100
-    880110 data
-
-    """
-    # paths = glob("follower/cpu1/test*/raft/node1/region000100000000/statemachine.log")
-
-    client = InsecureClient("http://localhost:9870", user="jimx")
-    paths = client.list("/raftlog/cpu/")
+    client = InsecureClient("http://localhost:9870", user=os.environ["USER"])
+    paths = client.list("/log_data")
     pbar = tqdm(paths, desc="Generating log data", total=880110)
     for _p in paths:
-        with client.read(
-            f"/raftlog/cpu/{_p}/statemachine.log", encoding="utf-8"
-        ) as reader:
+        with client.read(f"/log_data/{_p}", encoding="utf-8") as reader:
             contents = reader.read()
         contents = contents.splitlines()
-        _last_time = None
-        for idx, line in enumerate(contents):
+        for line in contents:
             pbar.update(1)
-            if idx == 0:
-                continue
-            line = line.strip().split(",")
-            raftTime = int(line[3])
-            if _last_time is None:
-                _last_time = raftTime
-            else:
-                diff = raftTime - _last_time
-                _last_time = raftTime
-                yield f"{diff}\n"
+            line = int(line.strip())
+            yield f"{line}\n"
 
 
 def start_server(host, port):
