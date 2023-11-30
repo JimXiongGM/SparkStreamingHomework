@@ -39,7 +39,6 @@ bash run.sh
 docker build -t spark_stream .
 
 # run
-# docker run -it -p 19000:9000 spark_stream
 docker images
 docker run -it -h h01 --name h01 -p 19000:9000 -v $PWD/output:/app/output 98caae367b8a
 
