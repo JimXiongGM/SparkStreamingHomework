@@ -10,7 +10,7 @@ from glob import glob
 # follower/cpu1/test1/raft/node1/region000100000000/statemachine.log -> log_data/1.log
 # follower/cpu1/test2/raft/node1/region000100000000/statemachine.log -> log_data/2.log
 os.makedirs("log_data", exist_ok=True)
-for i in range(1,21):
+for i in range(1, 21):
     path = f"follower/cpu1/test{i}/raft/node1/region*/statemachine.log"
     path = glob(path)[0]
     with open(path, "r") as f:

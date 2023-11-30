@@ -1,18 +1,17 @@
+import os
 from glob import glob
-from tqdm import tqdm
+
 from hdfs import InsecureClient
+from tqdm import tqdm
 
-patt = "follower/cpu1/test*/raft/node1/region000100000000/statemachine.log"
-# test 1 - test 20
+patt = "log_data/*.log"
 paths = glob(patt)
-paths.sort(key=lambda x: int(x.split("/")[2][4:]))
+paths.sort(key=lambda x: int(x.split("/")[-1].split(".")[0]))
 
-client = InsecureClient("http://localhost:9870", user="jimx")
-client.makedirs("/raftlog/cpu")
+client = InsecureClient("http://localhost:9870", user=os.environ["USER"])
+client.makedirs("/log_data")
 
-# follower/cpu1/test1/raft/node1/region000100000000/statemachine.log -> /raftlog/cpu/test1/statemachine.log
 for p in tqdm(paths):
-    client.makedirs("/raftlog/cpu/" + p.split("/")[2])
-    client.upload("/raftlog/cpu/" + p.split("/")[2] + "/statemachine.log", p)
+    client.upload("/log_data/" + p.split("/")[-1], p)
 
-print(list(client.walk("/raftlog/cpu", depth=2)))
+print(list(client.walk("/log_data", depth=1)))

@@ -1,7 +1,8 @@
 import socket
 import time
-from tqdm import tqdm
+
 from hdfs import InsecureClient
+from tqdm import tqdm
 
 
 def generate_log_data():
@@ -37,7 +38,6 @@ def generate_log_data():
                 diff = raftTime - _last_time
                 _last_time = raftTime
                 yield f"{diff}\n"
-        # break
 
 
 def start_server(host, port):

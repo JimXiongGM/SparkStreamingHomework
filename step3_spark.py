@@ -1,16 +1,13 @@
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import col, stddev, window, current_timestamp
+from pyspark.sql.functions import col, current_timestamp, stddev, window
 from pyspark.sql.types import IntegerType
-import logging
 from redis import StrictRedis
-
-logging.basicConfig(level=logging.WARN)
 
 """
 bin/spark-submit ../step3_spark.py
 """
 
-redis = StrictRedis(host="localhost", port=6379, decode_responses=True, db=1)
+redis = StrictRedis(host="localhost", port=6379, decode_responses=True, db=0)
 
 spark = SparkSession.builder.appName("StreamingCalculations").getOrCreate()
 spark.sparkContext.setLogLevel("WARN")
@@ -33,13 +30,13 @@ data_with_window = data_with_timestamp.withColumn(
     "window", window("timestamp", windowDuration, slideDuration)
 )
 result = data_with_window.groupBy("window").agg(stddev("data").alias("stddev"))
+
+
 def write_to_redis(df, epoch_id):
     pandas_df = df.toPandas()
     for index, row in pandas_df.iterrows():
         redis.set(str(row["window"][0]), str(row["stddev"]))
-query = (
-    result.writeStream.foreachBatch(write_to_redis)
-    .outputMode("append")
-    .start()
-)
+
+
+query = result.writeStream.foreachBatch(write_to_redis).outputMode("append").start()
 query.awaitTermination()
